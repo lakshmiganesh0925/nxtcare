@@ -1,4 +1,4 @@
-"use client";
+use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
@@ -25,12 +25,11 @@ import CustomFormField, { FormFieldType } from "../CustomFormField";
 import { FileUploader } from "../FileUploader";
 import SubmitButton from "../SubmitButton";
 
-
-const RegisterForm = ({ user }: { user: User }) => {
+const RegisterForm = ({ user }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<z.infer<typeof PatientFormValidation>>({
+  const form = useForm({
     resolver: zodResolver(PatientFormValidation),
     defaultValues: {
       ...PatientFormDefaultValues,
@@ -40,15 +39,11 @@ const RegisterForm = ({ user }: { user: User }) => {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof PatientFormValidation>) => {
+  const onSubmit = async (values) => {
     setIsLoading(true);
 
-    // Store file info in form data as
     let formData;
-    if (
-      values.identificationDocument &&
-      values.identificationDocument?.length > 0
-    ) {
+    if (values.identificationDocument && values.identificationDocument.length > 0) {
       const blobFile = new Blob([values.identificationDocument[0]], {
         type: values.identificationDocument[0].type,
       });
@@ -79,14 +74,11 @@ const RegisterForm = ({ user }: { user: User }) => {
         pastMedicalHistory: values.pastMedicalHistory,
         identificationType: values.identificationType,
         identificationNumber: values.identificationNumber,
-        identificationDocument: values.identificationDocument
-          ? formData
-          : undefined,
+        identificationDocument: values.identificationDocument ? formData : undefined,
         privacyConsent: values.privacyConsent,
       };
 
       const newPatient = await registerPatient(patient);
-
       if (newPatient) {
         router.push(`/patients/${user.$id}/new-appointment`);
       }
@@ -96,6 +88,8 @@ const RegisterForm = ({ user }: { user: User }) => {
 
     setIsLoading(false);
   };
+
+
 
   return (
     <Form {...form}>
